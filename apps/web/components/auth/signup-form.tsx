@@ -2,11 +2,13 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignupInput } from "@app/shared/zod/auth";
 import { signupAction } from "@/server/actions/auth";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import { Field } from "@/components/ui/field";
 
 export function SignupForm() {
   const router = useRouter();
@@ -21,13 +23,11 @@ export function SignupForm() {
   const onSubmit = (values: SignupInput) => {
     setServerError(null);
     startTransition(async () => {
-      // Create the user server-side (admin + mirror).
       const result = await signupAction(values);
       if (!result.ok) {
         setServerError(result.error.message);
         return;
       }
-      // Now sign in client-side so the cookie session lands.
       const supabase = createSupabaseBrowserClient();
       const { error } = await supabase.auth.signInWithPassword({
         email: values.email,
@@ -45,13 +45,13 @@ export function SignupForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <h1 className="text-2xl font-semibold">Create your account</h1>
-      <Field label="Name" error={errors.name?.message}>
+      <Field id="name" label="Name" error={errors.name?.message}>
         <input {...register("name")} className="input" autoComplete="name" />
       </Field>
-      <Field label="Email" error={errors.email?.message}>
+      <Field id="email" label="Email" error={errors.email?.message}>
         <input {...register("email")} type="email" className="input" autoComplete="email" />
       </Field>
-      <Field label="Password" error={errors.password?.message}>
+      <Field id="password" label="Password" error={errors.password?.message}>
         <input
           {...register("password")}
           type="password"
@@ -59,7 +59,11 @@ export function SignupForm() {
           autoComplete="new-password"
         />
       </Field>
-      {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+      {serverError && (
+        <p role="alert" className="text-sm text-red-600">
+          {serverError}
+        </p>
+      )}
       <button
         type="submit"
         disabled={pending}
@@ -68,20 +72,11 @@ export function SignupForm() {
         {pending ? "Creating…" : "Create account"}
       </button>
       <p className="text-center text-sm text-slate-600">
-        Already have an account? <a href="/login" className="text-brand-600 underline">Log in</a>
+        Already have an account?{" "}
+        <Link href="/login" className="text-brand-600 underline">
+          Log in
+        </Link>
       </p>
     </form>
-  );
-}
-
-function Field({
-  label, error, children,
-}: { label: string; error?: string | undefined; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium text-slate-700">{label}</span>
-      {children}
-      {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
-    </label>
   );
 }
