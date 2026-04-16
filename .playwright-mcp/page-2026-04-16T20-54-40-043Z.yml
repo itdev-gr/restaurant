@@ -1,0 +1,26 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e18]: Create your restaurant
+  - main [ref=e20]:
+    - generic [ref=e22]:
+      - heading "Create your restaurant" [level=1] [ref=e23]
+      - paragraph [ref=e24]: You can edit any of this later in Settings.
+      - generic [ref=e25]:
+        - generic [ref=e26]: Restaurant name
+        - textbox "Restaurant name" [ref=e27]
+      - generic [ref=e28]:
+        - generic [ref=e29]: Address (optional)
+        - textbox "Address (optional)" [ref=e30]
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: Currency
+          - combobox "Currency" [ref=e34]:
+            - option "EUR" [selected]
+            - option "USD"
+            - option "GBP"
+        - generic [ref=e35]:
+          - generic [ref=e36]: Tax %
+          - spinbutton "Tax %" [ref=e37]: "0"
+        - generic [ref=e38]:
+          - generic [ref=e39]: Service %
+          - spinbutton "Service %" [ref=e40]: "0"
+      - button "Create restaurant" [ref=e41] [cursor=pointer]

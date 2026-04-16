@@ -44,12 +44,20 @@ export function BulkCreateDialog({
         <div className="grid grid-cols-2 gap-3">
           <Field id="startAt" label="Start at number" error={errors.startAt?.message}>
             <input
-              {...register("startAt", { valueAsNumber: true })}
+              {...register("startAt", {
+                setValueAs: (v) => (v === "" || v === null ? undefined : Number(v)),
+              })}
               type="number" className="input" min={1} placeholder="auto"
             />
           </Field>
           <Field id="labelPrefix" label="Label prefix (optional)" error={errors.labelPrefix?.message}>
-            <input {...register("labelPrefix")} className="input" placeholder="Patio" />
+            <input
+              {...register("labelPrefix", {
+                setValueAs: (v) => (v === "" || v === null ? undefined : String(v)),
+              })}
+              className="input"
+              placeholder="Patio"
+            />
           </Field>
         </div>
         {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
