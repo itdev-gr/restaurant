@@ -1,0 +1,24 @@
+{
+  "name": "restaurant-platform",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@9.12.0",
+  "engines": { "node": ">=20.10.0" },
+  "scripts": {
+    "dev": "pnpm -F @app/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm -F @app/web test:e2e",
+    "db:generate": "pnpm -F @app/db generate",
+    "db:migrate": "pnpm -F @app/db migrate",
+    "db:seed": "pnpm -F @app/db seed",
+    "db:studio": "pnpm -F @app/db studio",
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}
