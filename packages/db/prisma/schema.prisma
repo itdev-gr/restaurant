@@ -37,6 +37,9 @@ model Restaurant {
   serviceChargePct Decimal      @default(0) @db.Decimal(5, 2)
   createdAt        DateTime     @default(now())
   memberships      Membership[]
+  categories       Category[]
+  menuItems        MenuItem[]
+  tables           Table[]
 }
 
 model Membership {
@@ -50,4 +53,69 @@ model Membership {
 
   @@unique([userId, restaurantId])
   @@index([restaurantId])
+}
+
+enum Station {
+  kitchen
+  bar
+  both
+}
+
+model Category {
+  id           String      @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  name         String
+  sortOrder    Int         @default(0)
+  isArchived   Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  items        MenuItem[]
+
+  @@index([restaurantId, isArchived, sortOrder])
+}
+
+model MenuItem {
+  id               String           @id @default(cuid())
+  restaurantId     String
+  restaurant       Restaurant       @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  categoryId       String
+  category         Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name             String
+  description      String?
+  priceCents       Int
+  station          Station
+  isAvailable      Boolean          @default(true)
+  isArchived       Boolean          @default(false)
+  sortOrder        Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  images           MenuItemImage[]
+
+  @@index([restaurantId, isArchived])
+  @@index([categoryId, sortOrder])
+}
+
+model MenuItemImage {
+  id          String    @id @default(cuid())
+  menuItemId  String
+  menuItem    MenuItem  @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  path        String
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  @@index([menuItemId, sortOrder])
+}
+
+model Table {
+  id           String      @id @default(cuid())
+  restaurantId String
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  number       Int
+  label        String?
+  token        String      @unique
+  isArchived   Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+
+  @@unique([restaurantId, number])
+  @@index([restaurantId, isArchived])
 }
