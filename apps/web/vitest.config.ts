@@ -46,6 +46,10 @@ export default defineConfig({
     // Tests that hit the shared Supabase dev project must run serially —
     // parallel files both wipe auth.users/public.User and would race each other.
     fileParallelism: false,
+    // Supabase session-pooler adds ~150ms per query; complex tests (e.g. order creation
+    // with nested items) make 8+ round-trips. Bump timeout to 20s to avoid flake.
+    testTimeout: 20_000,
+    hookTimeout: 20_000,
   },
   resolve: {
     alias: {
