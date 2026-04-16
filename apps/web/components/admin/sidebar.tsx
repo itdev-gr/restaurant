@@ -4,7 +4,7 @@ type NavItem = { href: string; label: string; ready: boolean };
 
 const NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", ready: true },
-  { href: "/orders", label: "Orders", ready: false },
+  { href: "/orders", label: "Orders", ready: true },
   { href: "/menu", label: "Menu", ready: true },
   { href: "/tables", label: "Tables", ready: true },
   { href: "/staff", label: "Staff", ready: false },
