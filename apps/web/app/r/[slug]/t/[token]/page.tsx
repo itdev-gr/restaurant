@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { resolveTableFromToken } from "@/server/services/table-session";
-import { setTableSessionAction } from "@/server/actions/table-session";
 import { listCategories } from "@/server/services/category";
 import { listItems } from "@/server/services/menu-item";
 import { MenuCategories } from "@/components/customer/menu-categories";
@@ -17,7 +16,6 @@ export default async function CustomerMenuPage({
 }) {
   const resolved = await resolveTableFromToken(params.slug, params.token);
   if (!resolved.ok) notFound();
-  await setTableSessionAction(resolved.data.restaurantId, resolved.data.tableId);
 
   const categories = await listCategories(resolved.data.restaurantId);
   const activeId = searchParams.category ?? categories[0]?.id ?? null;

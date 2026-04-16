@@ -39,7 +39,7 @@ export function CheckoutForm({ slug, token }: { slug: string; token: string }) {
   const submit = (paymentMethod: "cash" | "card") => {
     setError(null);
     startTransition(async () => {
-      const r = await submitOrderAction({
+      const r = await submitOrderAction(slug, token, {
         paymentMethod,
         items: cart.lines.map((l) => ({
           menuItemId: l.menuItemId,

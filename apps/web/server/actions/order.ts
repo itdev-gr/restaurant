@@ -1,22 +1,22 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { TABLE_COOKIE, verifyTableCookie } from "@/lib/table-session";
+import { resolveTableFromToken } from "@/server/services/table-session";
 import { createOrder } from "@/server/services/order";
 import type { ActionResult } from "@/server/actions/auth";
 
 export async function submitOrderAction(
+  slug: string,
+  token: string,
   raw: unknown,
 ): Promise<ActionResult<{ code: string }>> {
-  const cookieValue = cookies().get(TABLE_COOKIE)?.value;
-  const session = verifyTableCookie(cookieValue);
-  if (!session) {
+  const resolved = await resolveTableFromToken(slug, token);
+  if (!resolved.ok) {
     return {
       ok: false,
-      error: { code: "NO_SESSION", message: "Table session expired. Rescan the QR code." },
+      error: { code: "NO_SESSION", message: "Table not available. Rescan the QR code." },
     };
   }
-  const result = await createOrder(session.rid, session.tid, raw);
+  const result = await createOrder(resolved.data.restaurantId, resolved.data.tableId, raw);
   if (!result.ok) return result;
   return { ok: true, data: { code: result.data.code } };
 }
