@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { createRestaurantForUser } from "@/server/actions/restaurant";
+import { createRestaurantForUser } from "@/server/services/restaurant";
 import { prisma } from "@/lib/db";
 import { resetDb } from "../../_helpers/db";
 import { resetSupabaseAuthUsers } from "../../_helpers/supabase";
