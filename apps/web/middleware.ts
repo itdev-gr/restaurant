@@ -4,6 +4,7 @@ import { updateSession } from "@/lib/supabase-middleware";
 const PROTECTED = [
   /^\/dashboard/, /^\/onboarding/, /^\/orders/, /^\/menu/,
   /^\/tables/, /^\/staff/, /^\/reports/, /^\/settings/,
+  /^\/kitchen/, /^\/bar/, /^\/cashier/,
 ];
 
 export default async function middleware(req: NextRequest) {
