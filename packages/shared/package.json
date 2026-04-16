@@ -11,7 +11,8 @@
     "./zod/restaurant": "./src/zod/restaurant.ts",
     "./zod/category": "./src/zod/category.ts",
     "./zod/menu-item": "./src/zod/menu-item.ts",
-    "./zod/table": "./src/zod/table.ts"
+    "./zod/table": "./src/zod/table.ts",
+    "./zod/order": "./src/zod/order.ts"
   },
   "scripts": { "typecheck": "tsc --noEmit" },
   "dependencies": { "zod": "^3.23.8" },
