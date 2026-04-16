@@ -1,11 +1,11 @@
-import { requireMembership } from "@/lib/membership";
+import { requireAdminRole } from "@/lib/require-role";
 import { getRevenueByDay, getTopItems, getPaymentSplit } from "@/server/services/reports";
 
 export const metadata = { title: "Reports" };
 export const dynamic = "force-dynamic";
 
 export default async function ReportsPage() {
-  const { restaurantId } = await requireMembership();
+  const { restaurantId } = await requireAdminRole();
   const [revenue, topItems, paymentSplit] = await Promise.all([
     getRevenueByDay(restaurantId),
     getTopItems(restaurantId),

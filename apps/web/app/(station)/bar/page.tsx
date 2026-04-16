@@ -1,4 +1,4 @@
-import { requireMembership } from "@/lib/membership";
+import { requireStationRole } from "@/lib/require-role";
 import { prisma } from "@/lib/db";
 import { StationBoard } from "@/components/station/station-board";
 
@@ -6,7 +6,7 @@ export const metadata = { title: "Bar" };
 export const dynamic = "force-dynamic";
 
 export default async function BarPage() {
-  const { restaurantId } = await requireMembership();
+  const { restaurantId } = await requireStationRole("bar");
 
   const orders = await prisma.order.findMany({
     where: {

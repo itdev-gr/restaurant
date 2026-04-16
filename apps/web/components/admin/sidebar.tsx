@@ -7,9 +7,9 @@ const NAV: NavItem[] = [
   { href: "/orders", label: "Orders", ready: true },
   { href: "/menu", label: "Menu", ready: true },
   { href: "/tables", label: "Tables", ready: true },
-  { href: "/staff", label: "Staff", ready: false },
-  { href: "/reports", label: "Reports", ready: false },
-  { href: "/settings", label: "Settings", ready: false },
+  { href: "/staff", label: "Staff", ready: true },
+  { href: "/reports", label: "Reports", ready: true },
+  { href: "/settings", label: "Settings", ready: true },
 ];
 
 export function Sidebar() {

@@ -1,4 +1,4 @@
-import { requireMembership } from "@/lib/membership";
+import { requireAdminRole } from "@/lib/require-role";
 import { getRestaurantSettings } from "@/server/services/restaurant-settings";
 import { SettingsForm } from "@/components/admin/settings-form";
 
@@ -6,7 +6,7 @@ export const metadata = { title: "Settings" };
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const { restaurantId } = await requireMembership();
+  const { restaurantId } = await requireAdminRole();
   const settings = await getRestaurantSettings(restaurantId);
 
   return (
