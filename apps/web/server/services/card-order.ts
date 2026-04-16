@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
+import { broadcastNewOrder } from "@/lib/realtime";
 import { createOrder } from "@/server/services/order";
 import { resolveTableFromToken } from "@/server/services/table-session";
 import type { ActionResult } from "@/server/actions/auth";
@@ -38,6 +39,36 @@ export async function createCardOrder(
     where: { id: order.id },
     data: { stripePaymentIntentId: pi.id },
   });
+
+  // Best-effort broadcast to kitchen/bar/cashier station boards
+  await prisma.order
+    .findUniqueOrThrow({
+      where: { id: orderResult.data.id },
+      include: {
+        items: true,
+        table: { select: { number: true, label: true } },
+      },
+    })
+    .then((fullOrder) =>
+      broadcastNewOrder(resolved.data.restaurantId, {
+        orderId: fullOrder.id,
+        orderCode: fullOrder.code,
+        tableNumber: fullOrder.table.number,
+        tableLabel: fullOrder.table.label,
+        items: fullOrder.items.map((it) => ({
+          id: it.id,
+          name: it.nameSnapshot,
+          qty: it.qty,
+          note: it.note,
+          station: it.station,
+          status: it.status,
+        })),
+        paymentMethod: fullOrder.paymentMethod,
+        totalCents: fullOrder.totalCents,
+        createdAt: fullOrder.createdAt.toISOString(),
+      }),
+    )
+    .catch(() => {});
 
   return {
     ok: true,
