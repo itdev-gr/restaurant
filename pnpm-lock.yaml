@@ -29,6 +29,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.72.1(react@18.3.1))
+      '@prisma/nextjs-monorepo-workaround-plugin':
+        specifier: ^7.7.0
+        version: 7.7.0
       '@supabase/ssr':
         specifier: ^0.5.1
         version: 0.5.2(@supabase/supabase-js@2.103.3)
@@ -778,6 +781,9 @@ packages:
 
   '@prisma/get-platform@5.22.0':
     resolution: {integrity: sha512-pHhpQdr1UPFpt+zFfnPazhulaZYCUqeIcPpJViYoq9R+D/yw4fjE+CtnsnKzPYm0ddUbeXUzjGVGIRVgPDCk4Q==}
+
+  '@prisma/nextjs-monorepo-workaround-plugin@7.7.0':
+    resolution: {integrity: sha512-EWZ0wtla1i4xKG5k0L1tm9yAzxbbMjFO24QvSB6hLaP8v6Do5S26CjDqB5xWLl9mSGiDQJ4FvBddt+IpZf03Jg==}
 
   '@rollup/rollup-android-arm-eabi@4.60.1':
     resolution: {integrity: sha512-d6FinEBLdIiK+1uACUttJKfgZREXrF0Qc2SmLII7W2AD8FfiZ9Wjd+rD/iRuf5s5dWrr1GgwXCvPqOuDquOowA==}
@@ -3624,6 +3630,8 @@ snapshots:
   '@prisma/get-platform@5.22.0':
     dependencies:
       '@prisma/debug': 5.22.0
+
+  '@prisma/nextjs-monorepo-workaround-plugin@7.7.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.60.1':
     optional: true

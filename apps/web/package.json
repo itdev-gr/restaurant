@@ -17,6 +17,7 @@
     "@app/db": "workspace:*",
     "@app/shared": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^7.7.0",
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.4",
     "next": "14.2.15",
