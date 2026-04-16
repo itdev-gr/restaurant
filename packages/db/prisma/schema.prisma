@@ -62,13 +62,14 @@ enum Station {
 }
 
 model Category {
-  id           String      @id @default(cuid())
+  id           String     @id @default(cuid())
   restaurantId String
-  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   name         String
-  sortOrder    Int         @default(0)
-  isArchived   Boolean     @default(false)
-  createdAt    DateTime    @default(now())
+  sortOrder    Int        @default(0)
+  isArchived   Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
   items        MenuItem[]
 
   @@index([restaurantId, isArchived, sortOrder])
@@ -107,14 +108,15 @@ model MenuItemImage {
 }
 
 model Table {
-  id           String      @id @default(cuid())
+  id           String     @id @default(cuid())
   restaurantId String
-  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   number       Int
   label        String?
-  token        String      @unique
-  isArchived   Boolean     @default(false)
-  createdAt    DateTime    @default(now())
+  token        String     @unique
+  isArchived   Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   @@unique([restaurantId, number])
   @@index([restaurantId, isArchived])
