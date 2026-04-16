@@ -8,7 +8,10 @@
   "exports": {
     ".": "./src/index.ts",
     "./zod/auth": "./src/zod/auth.ts",
-    "./zod/restaurant": "./src/zod/restaurant.ts"
+    "./zod/restaurant": "./src/zod/restaurant.ts",
+    "./zod/category": "./src/zod/category.ts",
+    "./zod/menu-item": "./src/zod/menu-item.ts",
+    "./zod/table": "./src/zod/table.ts"
   },
   "scripts": { "typecheck": "tsc --noEmit" },
   "dependencies": { "zod": "^3.23.8" },
