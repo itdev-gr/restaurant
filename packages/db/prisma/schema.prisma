@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  owner
+  manager
+  kitchen
+  bar
+  cashier
+}
+
+// Mirror of supabase auth.users.id (UUID). Populated by signup server action.
+model User {
+  id           String       @id @db.Uuid
+  email        String       @unique
+  name         String?
+  createdAt    DateTime     @default(now())
+  lastLoginAt  DateTime?
+  memberships  Membership[]
+}
+
+model Restaurant {
+  id               String       @id @default(cuid())
+  slug             String       @unique
+  name             String
+  address          String?
+  currency         String       @default("EUR")
+  taxRate          Decimal      @default(0) @db.Decimal(5, 2)
+  serviceChargePct Decimal      @default(0) @db.Decimal(5, 2)
+  createdAt        DateTime     @default(now())
+  memberships      Membership[]
+}
+
+model Membership {
+  id           String     @id @default(cuid())
+  userId       String     @db.Uuid
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  role         Role
+  createdAt    DateTime   @default(now())
+
+  @@unique([userId, restaurantId])
+  @@index([restaurantId])
+}

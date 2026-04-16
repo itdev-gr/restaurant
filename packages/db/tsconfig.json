@@ -1,0 +1,5 @@
+{
+  "extends": "@app/config/tsconfig",
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
