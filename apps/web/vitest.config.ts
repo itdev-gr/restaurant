@@ -43,6 +43,9 @@ export default defineConfig({
     exclude: ["__tests__/e2e/**"],
     coverage: { reporter: ["text", "html"], include: ["lib/**", "server/**"] },
     env: fileEnv,
+    // Tests that hit the shared Supabase dev project must run serially —
+    // parallel files both wipe auth.users/public.User and would race each other.
+    fileParallelism: false,
   },
   resolve: {
     alias: {
