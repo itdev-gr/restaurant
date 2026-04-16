@@ -12,7 +12,8 @@
     "./zod/category": "./src/zod/category.ts",
     "./zod/menu-item": "./src/zod/menu-item.ts",
     "./zod/table": "./src/zod/table.ts",
-    "./zod/order": "./src/zod/order.ts"
+    "./zod/order": "./src/zod/order.ts",
+    "./zod/staff": "./src/zod/staff.ts"
   },
   "scripts": { "typecheck": "tsc --noEmit" },
   "dependencies": { "zod": "^3.23.8" },
