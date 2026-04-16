@@ -53,7 +53,13 @@ export async function signupAction(
     });
   } catch (err) {
     await admin.auth.admin.deleteUser(data.user.id).catch(() => {});
-    throw err;
+    return {
+      ok: false,
+      error: {
+        code: "MIRROR_FAILED",
+        message: err instanceof Error ? err.message : "Failed to create user record.",
+      },
+    };
   }
 
   return { ok: true, data: { userId: data.user.id } };
