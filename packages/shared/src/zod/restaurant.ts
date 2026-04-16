@@ -12,3 +12,12 @@ export const CreateRestaurantInput = z.object({
   serviceChargePct: z.coerce.number().min(0).max(100).default(0),
 });
 export type CreateRestaurantInput = z.infer<typeof CreateRestaurantInput>;
+
+export const UpdateRestaurantInput = z.object({
+  name: z.string().trim().min(2).max(80),
+  address: z.string().trim().max(200).optional(),
+  currency: CurrencySchema,
+  taxRatePct: z.coerce.number().min(0).max(100),
+  serviceChargePct: z.coerce.number().min(0).max(100),
+});
+export type UpdateRestaurantInput = z.infer<typeof UpdateRestaurantInput>;
