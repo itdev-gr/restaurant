@@ -2,6 +2,7 @@
 
 import { requireMembership } from "@/lib/membership";
 import { prisma } from "@/lib/db";
+import { getStripe } from "@/lib/stripe";
 import type { ActionResult } from "@/server/actions/auth";
 
 type Status = "received" | "preparing" | "ready" | "served" | "cancelled";
@@ -28,5 +29,21 @@ export async function markOrderPaidAction(
     data: { paymentStatus: "paid", paidAt: new Date() },
   });
   if (count === 0) return { ok: false, error: { code: "NOT_FOUND", message: "Order not found." } };
+  return { ok: true, data: { id } };
+}
+
+export async function refundOrderAction(
+  id: string,
+): Promise<ActionResult<{ id: string }>> {
+  const { restaurantId } = await requireMembership();
+  const order = await prisma.order.findFirst({
+    where: { id, restaurantId, paymentMethod: "card", paymentStatus: "paid" },
+    select: { stripePaymentIntentId: true },
+  });
+  if (!order || !order.stripePaymentIntentId) {
+    return { ok: false, error: { code: "NOT_FOUND", message: "Order not found or not refundable." } };
+  }
+  const stripe = getStripe();
+  await stripe.refunds.create({ payment_intent: order.stripePaymentIntentId });
   return { ok: true, data: { id } };
 }

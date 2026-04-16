@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { setOrderStatusAction, markOrderPaidAction } from "@/server/actions/order-admin";
+import { setOrderStatusAction, markOrderPaidAction, refundOrderAction } from "@/server/actions/order-admin";
 
 type OrderStatus = "received" | "preparing" | "ready" | "served" | "cancelled";
 
@@ -49,6 +49,14 @@ export function OrdersList({ orders }: { orders: Order[] }) {
   const markPaid = (id: string) => {
     startTransition(async () => {
       await markOrderPaidAction(id);
+      router.refresh();
+    });
+  };
+
+  const refund = (id: string) => {
+    if (!confirm("Refund this order? This cannot be undone.")) return;
+    startTransition(async () => {
+      await refundOrderAction(id);
       router.refresh();
     });
   };
@@ -108,6 +116,15 @@ export function OrdersList({ orders }: { orders: Order[] }) {
                 className="rounded-md border px-3 py-1.5 text-xs hover:bg-slate-50 disabled:opacity-50"
               >
                 Mark paid
+              </button>
+            )}
+            {o.paymentMethod === "card" && o.paymentStatus === "paid" && (
+              <button
+                disabled={pending}
+                onClick={() => refund(o.id)}
+                className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 disabled:opacity-50"
+              >
+                Refund
               </button>
             )}
           </div>
