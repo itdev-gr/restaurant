@@ -1,0 +1,19 @@
+{
+  "name": "@app/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./eslint.config.mjs",
+  "exports": {
+    "./eslint": "./eslint.config.mjs",
+    "./prettier": "./prettier.config.mjs",
+    "./tsconfig": "./tsconfig.base.json"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "eslint": "^9.13.0",
+    "eslint-config-next": "^14.2.15",
+    "eslint-plugin-import": "^2.31.0",
+    "typescript-eslint": "^8.11.0"
+  }
+}

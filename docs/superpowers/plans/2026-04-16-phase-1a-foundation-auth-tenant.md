@@ -101,6 +101,7 @@ restaurant/
 ```
 
 **Boundaries:**
+
 - `packages/db`: owns the Prisma schema and exports a singleton `prisma` client.
 - `packages/shared`: pure types and zod schemas — no runtime Next.js or DB deps.
 - `apps/web/lib`: framework-aware helpers; one responsibility per file.
@@ -126,6 +127,7 @@ restaurant/
 ### Task 1: Initialize pnpm monorepo skeleton
 
 **Files:**
+
 - Create: `package.json`, `pnpm-workspace.yaml`, `tsconfig.base.json`, `.gitignore`, `.nvmrc`, `.editorconfig`, `README.md`
 
 - [ ] **Step 1: Enable pnpm via corepack and initialize git**
@@ -240,7 +242,7 @@ packages:
 
 - [ ] **Step 8: Write `README.md`**
 
-```markdown
+````markdown
 # Restaurant Platform
 
 Multi-tenant SaaS for QR-code dine-in ordering. See `docs/superpowers/specs/2026-04-16-restaurant-ordering-platform-design.md` for architecture.
@@ -255,9 +257,11 @@ pnpm db:migrate
 pnpm db:seed
 pnpm dev
 ```
+````
 
 App at http://localhost:3000. Studio: https://supabase.com (your `restaurant-dev` project → Table Editor).
-```
+
+````
 
 - [ ] **Step 9: Install root deps**
 
@@ -269,13 +273,14 @@ Expected: lockfile generated.
 ```bash
 git add -A
 git commit -m "chore: initialize pnpm monorepo skeleton"
-```
+````
 
 ---
 
 ### Task 2: Set up shared lint/format/tsconfig package
 
 **Files:**
+
 - Create: `packages/config/package.json`
 - Create: `packages/config/eslint.config.mjs`
 - Create: `packages/config/prettier.config.mjs`
@@ -388,6 +393,7 @@ git commit -m "chore: add shared eslint/prettier/tsconfig package"
 ### Task 3: Create Supabase Cloud dev project and Prisma in `packages/db`
 
 **Files:**
+
 - Create: `packages/db/package.json`, `packages/db/tsconfig.json`, `packages/db/prisma/schema.prisma`, `packages/db/src/index.ts`, `packages/db/src/seed.ts`, `packages/db/.env.example`
 
 **Manual prerequisite (user does this in browser, ~2 min):**
@@ -572,6 +578,7 @@ git commit -m "feat(db): add prisma schema mirrored to supabase auth.users (User
 ### Task 4: Scaffold Next.js app skeleton with Tailwind and Supabase env vars
 
 **Files:**
+
 - Create: `apps/web/package.json`, `next.config.mjs`, `tsconfig.json`, `tailwind.config.ts`, `postcss.config.mjs`, `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `.env.example`, `lib/db.ts`, `.eslintrc.cjs`
 
 - [ ] **Step 1: Create `apps/web/package.json`**
@@ -689,12 +696,17 @@ export default { plugins: { tailwindcss: {}, autoprefixer: {} } };
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
-html, body { @apply h-full bg-white text-slate-900 antialiased; }
+:root {
+  color-scheme: light;
+}
+html,
+body {
+  @apply h-full bg-white text-slate-900 antialiased;
+}
 
 @layer components {
   .input {
-    @apply w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+    @apply focus:border-brand-500 focus:ring-brand-500/20 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:outline-none;
   }
 }
 ```
@@ -712,7 +724,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en"><body>{children}</body></html>
+    <html lang="en">
+      <body>{children}</body>
+    </html>
   );
 }
 ```
@@ -726,7 +740,10 @@ export default function HomePage() {
       <h1 className="text-4xl font-semibold tracking-tight">Restaurant Platform</h1>
       <p className="text-slate-600">QR-code dine-in ordering for restaurants.</p>
       <div className="flex gap-3">
-        <a className="rounded-md bg-brand-500 px-4 py-2 text-white hover:bg-brand-600" href="/signup">
+        <a
+          className="bg-brand-500 hover:bg-brand-600 rounded-md px-4 py-2 text-white"
+          href="/signup"
+        >
           Get started
         </a>
         <a className="rounded-md border px-4 py-2 hover:bg-slate-50" href="/login">
@@ -787,11 +804,13 @@ git commit -m "feat(web): scaffold Next.js 14 with Tailwind and Supabase env wir
 ### Task 5: Set up Vitest and Playwright
 
 **Files:**
+
 - Create: `apps/web/vitest.config.ts`, `__tests__/setup.ts`, `playwright.config.ts`, `__tests__/smoke.test.ts`
 
 - [ ] **Step 1: Add test devDeps**
 
 Run:
+
 ```bash
 pnpm -F @app/web add -D vitest @vitest/coverage-v8 @testing-library/react @testing-library/jest-dom jsdom @playwright/test
 ```
@@ -876,6 +895,7 @@ git commit -m "chore(web): set up vitest and playwright"
 ### Task 6: Build `lib/slug.ts` with TDD
 
 **Files:**
+
 - Create: `apps/web/lib/slug.ts`, `__tests__/lib/slug.test.ts`
 
 - [ ] **Step 1: Write failing test `apps/web/__tests__/lib/slug.test.ts`**
@@ -958,6 +978,7 @@ git commit -m "feat(web): add slugify and generateUniqueSlug helpers"
 ### Task 7: Build shared zod schemas in `packages/shared`
 
 **Files:**
+
 - Create: `packages/shared/package.json`, `tsconfig.json`, `src/index.ts`, `src/zod/auth.ts`, `src/zod/restaurant.ts`
 
 - [ ] **Step 1: Create `packages/shared/package.json`**
@@ -1049,6 +1070,7 @@ git commit -m "feat(shared): add zod schemas for auth and restaurant"
 ### Task 8: Build Supabase client helpers (browser, server, admin, middleware)
 
 **Files:**
+
 - Create: `apps/web/lib/supabase-browser.ts`, `supabase-server.ts`, `supabase-admin.ts`, `supabase-middleware.ts`, `auth-helpers.ts`
 
 - [ ] **Step 1: Create `apps/web/lib/supabase-browser.ts`**
@@ -1148,7 +1170,9 @@ export async function updateSession(req: NextRequest) {
     },
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return { res, user };
 }
 ```
@@ -1162,7 +1186,9 @@ import { prisma } from "@/lib/db";
 
 export async function getSessionUser() {
   const supabase = createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 }
 
@@ -1180,7 +1206,12 @@ export async function requireRestaurant() {
     select: { restaurantId: true, role: true, restaurant: { select: { name: true, slug: true } } },
   });
   if (!membership) redirect("/onboarding");
-  return { user, restaurantId: membership.restaurantId, role: membership.role, restaurant: membership.restaurant };
+  return {
+    user,
+    restaurantId: membership.restaurantId,
+    role: membership.role,
+    restaurant: membership.restaurant,
+  };
 }
 ```
 
@@ -1201,6 +1232,7 @@ git commit -m "feat(web): add supabase client helpers (browser/server/admin/midd
 ### Task 9: Implement signup server action with TDD (Supabase admin + mirror)
 
 **Files:**
+
 - Create: `apps/web/server/actions/auth.ts`
 - Create: `apps/web/__tests__/server/actions/auth.test.ts`
 - Create: `apps/web/__tests__/_helpers/db.ts`
@@ -1299,9 +1331,7 @@ export type ActionResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: { code: string; message: string; fields?: Record<string, string> } };
 
-export async function signupAction(
-  raw: unknown,
-): Promise<ActionResult<{ userId: string }>> {
+export async function signupAction(raw: unknown): Promise<ActionResult<{ userId: string }>> {
   const parsed = SignupInput.safeParse(raw);
   if (!parsed.success) {
     return {
@@ -1334,7 +1364,10 @@ export async function signupAction(
     return { ok: false, error: { code: "AUTH_CREATE_FAILED", message: error.message } };
   }
   if (!data.user) {
-    return { ok: false, error: { code: "AUTH_CREATE_FAILED", message: "Supabase returned no user." } };
+    return {
+      ok: false,
+      error: { code: "AUTH_CREATE_FAILED", message: "Supabase returned no user." },
+    };
   }
 
   // Mirror into public.User. If this fails, roll back the auth user to keep them in sync.
@@ -1370,6 +1403,7 @@ git commit -m "feat(web): add signupAction using Supabase admin + public.User mi
 ### Task 10: Build signup page with form and e2e
 
 **Files:**
+
 - Create: `apps/web/app/(auth)/layout.tsx`, `(auth)/signup/page.tsx`, `components/auth/signup-form.tsx`, `__tests__/e2e/signup.spec.ts`
 
 - [ ] **Step 1: Install form deps**
@@ -1456,20 +1490,29 @@ export function SignupForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 disabled:opacity-50"
+        className="bg-brand-500 hover:bg-brand-600 w-full rounded-md px-4 py-2 text-white disabled:opacity-50"
       >
         {pending ? "Creating…" : "Create account"}
       </button>
       <p className="text-center text-sm text-slate-600">
-        Already have an account? <a href="/login" className="text-brand-600 underline">Log in</a>
+        Already have an account?{" "}
+        <a href="/login" className="text-brand-600 underline">
+          Log in
+        </a>
       </p>
     </form>
   );
 }
 
 function Field({
-  label, error, children,
-}: { label: string; error?: string; children: React.ReactNode }) {
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium text-slate-700">{label}</span>
@@ -1532,6 +1575,7 @@ git commit -m "feat(web): add signup page (Supabase admin createUser + client si
 ### Task 11: Build login page with e2e
 
 **Files:**
+
 - Create: `apps/web/app/(auth)/login/page.tsx`, `components/auth/login-form.tsx`, `__tests__/e2e/login.spec.ts`
 
 - [ ] **Step 1: Create `apps/web/components/auth/login-form.tsx`**
@@ -1578,7 +1622,9 @@ export function LoginForm() {
       <label className="block">
         <span className="mb-1 block text-sm font-medium text-slate-700">Email</span>
         <input {...register("email")} type="email" className="input" autoComplete="email" />
-        {errors.email && <span className="mt-1 block text-xs text-red-600">{errors.email.message}</span>}
+        {errors.email && (
+          <span className="mt-1 block text-xs text-red-600">{errors.email.message}</span>
+        )}
       </label>
       <label className="block">
         <span className="mb-1 block text-sm font-medium text-slate-700">Password</span>
@@ -1596,12 +1642,15 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 disabled:opacity-50"
+        className="bg-brand-500 hover:bg-brand-600 w-full rounded-md px-4 py-2 text-white disabled:opacity-50"
       >
         {pending ? "Signing in…" : "Log in"}
       </button>
       <p className="text-center text-sm text-slate-600">
-        New here? <a href="/signup" className="text-brand-600 underline">Create an account</a>
+        New here?{" "}
+        <a href="/signup" className="text-brand-600 underline">
+          Create an account
+        </a>
       </p>
     </form>
   );
@@ -1664,6 +1713,7 @@ git commit -m "feat(web): add login page using Supabase signInWithPassword"
 ### Task 12: Implement restaurant onboarding wizard with TDD
 
 **Files:**
+
 - Create: `apps/web/server/actions/restaurant.ts`, `__tests__/server/actions/restaurant.test.ts`, `app/(admin)/onboarding/page.tsx`, `components/admin/onboarding-form.tsx`, `__tests__/e2e/onboarding.spec.ts`
 
 - [ ] **Step 1: Write failing unit test `apps/web/__tests__/server/actions/restaurant.test.ts`**
@@ -1679,7 +1729,9 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 async function makeUser(email = "owner@example.com") {
   const admin = getSupabaseAdmin();
   const { data, error } = await admin.auth.admin.createUser({
-    email, password: "Sup3rSecret!", email_confirm: true,
+    email,
+    password: "Sup3rSecret!",
+    email_confirm: true,
   });
   if (error || !data.user) throw error ?? new Error("no user");
   await prisma.user.create({ data: { id: data.user.id, email, name: "Owner" } });
@@ -1716,9 +1768,17 @@ describe("createRestaurantForUser", () => {
   it("appends suffix when slug taken", async () => {
     const u1 = await makeUser("a@example.com");
     const u2 = await makeUser("b@example.com");
-    await createRestaurantForUser(u1.id, { name: "Cafe", currency: "EUR", taxRatePct: 0, serviceChargePct: 0 });
+    await createRestaurantForUser(u1.id, {
+      name: "Cafe",
+      currency: "EUR",
+      taxRatePct: 0,
+      serviceChargePct: 0,
+    });
     const second = await createRestaurantForUser(u2.id, {
-      name: "Cafe", currency: "EUR", taxRatePct: 0, serviceChargePct: 0,
+      name: "Cafe",
+      currency: "EUR",
+      taxRatePct: 0,
+      serviceChargePct: 0,
     });
     expect(second.ok).toBe(true);
     if (!second.ok) return;
@@ -1850,7 +1910,9 @@ export function OnboardingForm() {
       <label className="block">
         <span className="mb-1 block text-sm font-medium text-slate-700">Restaurant name</span>
         <input {...register("name")} className="input" />
-        {errors.name && <span className="mt-1 block text-xs text-red-600">{errors.name.message}</span>}
+        {errors.name && (
+          <span className="mt-1 block text-xs text-red-600">{errors.name.message}</span>
+        )}
       </label>
 
       <label className="block">
@@ -1862,16 +1924,30 @@ export function OnboardingForm() {
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-slate-700">Currency</span>
           <select {...register("currency")} className="input">
-            {CURRENCIES.map((c) => (<option key={c} value={c}>{c}</option>))}
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </select>
         </label>
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-slate-700">Tax %</span>
-          <input {...register("taxRatePct", { valueAsNumber: true })} type="number" step="0.01" className="input" />
+          <input
+            {...register("taxRatePct", { valueAsNumber: true })}
+            type="number"
+            step="0.01"
+            className="input"
+          />
         </label>
         <label className="block">
           <span className="mb-1 block text-sm font-medium text-slate-700">Service %</span>
-          <input {...register("serviceChargePct", { valueAsNumber: true })} type="number" step="0.01" className="input" />
+          <input
+            {...register("serviceChargePct", { valueAsNumber: true })}
+            type="number"
+            step="0.01"
+            className="input"
+          />
         </label>
       </div>
 
@@ -1880,7 +1956,7 @@ export function OnboardingForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-brand-500 px-4 py-2 text-white hover:bg-brand-600 disabled:opacity-50"
+        className="bg-brand-500 hover:bg-brand-600 w-full rounded-md px-4 py-2 text-white disabled:opacity-50"
       >
         {pending ? "Creating…" : "Create restaurant"}
       </button>
@@ -1903,7 +1979,8 @@ export default async function OnboardingPage() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
   const existing = await prisma.membership.findFirst({
-    where: { userId: user.id }, select: { restaurantId: true },
+    where: { userId: user.id },
+    select: { restaurantId: true },
   });
   if (existing) redirect("/dashboard");
   return (
@@ -1951,6 +2028,7 @@ git commit -m "feat(web): add restaurant onboarding wizard with server action an
 ### Task 13: Build admin layout, dashboard placeholder, middleware, tenant helper
 
 **Files:**
+
 - Create: `apps/web/middleware.ts`, `app/(admin)/layout.tsx`, `app/(admin)/dashboard/page.tsx`, `components/admin/sidebar.tsx`, `components/admin/topbar.tsx`, `lib/tenant.ts`, `__tests__/lib/tenant.test.ts`
 
 - [ ] **Step 1: Create `apps/web/middleware.ts`**
@@ -1960,8 +2038,14 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase-middleware";
 
 const PROTECTED = [
-  /^\/dashboard/, /^\/onboarding/, /^\/orders/, /^\/menu/,
-  /^\/tables/, /^\/staff/, /^\/reports/, /^\/settings/,
+  /^\/dashboard/,
+  /^\/onboarding/,
+  /^\/orders/,
+  /^\/menu/,
+  /^\/tables/,
+  /^\/staff/,
+  /^\/reports/,
+  /^\/settings/,
 ];
 
 export default async function middleware(req: NextRequest) {
@@ -2025,7 +2109,13 @@ export function Sidebar() {
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 
-export function Topbar({ restaurantName, userEmail }: { restaurantName: string; userEmail: string }) {
+export function Topbar({
+  restaurantName,
+  userEmail,
+}: {
+  restaurantName: string;
+  userEmail: string;
+}) {
   const router = useRouter();
   const onSignOut = async () => {
     const supabase = createSupabaseBrowserClient();
@@ -2096,10 +2186,19 @@ export default async function DashboardPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">{restaurant.name}</h1>
       <p className="text-slate-600">
-        Slug: <code className="rounded bg-slate-100 px-1.5 py-0.5">{restaurant.slug}</code> · ID: <code className="rounded bg-slate-100 px-1.5 py-0.5">{restaurantId}</code>
+        Slug: <code className="rounded bg-slate-100 px-1.5 py-0.5">{restaurant.slug}</code> · ID:{" "}
+        <code className="rounded bg-slate-100 px-1.5 py-0.5">{restaurantId}</code>
       </p>
       <div className="rounded-lg border border-dashed p-8 text-center text-slate-500">
-        Dashboard widgets land here in Phase 5. For now, head to <a href="/menu" className="text-brand-600 underline">Menu</a> or <a href="/tables" className="text-brand-600 underline">Tables</a> (coming in Phase 1B).
+        Dashboard widgets land here in Phase 5. For now, head to{" "}
+        <a href="/menu" className="text-brand-600 underline">
+          Menu
+        </a>{" "}
+        or{" "}
+        <a href="/tables" className="text-brand-600 underline">
+          Tables
+        </a>{" "}
+        (coming in Phase 1B).
       </div>
     </div>
   );
@@ -2125,7 +2224,9 @@ describe("currentRestaurantId", () => {
 
   it("returns restaurantId from primary membership", async () => {
     (getSessionUser as ReturnType<typeof vi.fn>).mockResolvedValue({ id: "u1", email: "x" });
-    (prisma.membership.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({ restaurantId: "r1" });
+    (prisma.membership.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+      restaurantId: "r1",
+    });
     expect(await currentRestaurantId()).toBe("r1");
   });
 
@@ -2192,6 +2293,7 @@ git commit -m "feat(web): add admin layout, dashboard, supabase middleware, tena
 ### Task 14: Set up GitHub Actions CI
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 CI runs lint + typecheck + pure-logic unit tests + Next build. Tests that hit Supabase Auth (`auth.test.ts`, `restaurant.test.ts`) are excluded from CI — they're integration tests that run locally against your `restaurant-dev` Supabase project. A nightly job can be added later to run them against a dedicated CI Supabase project. The `next build` step needs DB access for Prisma generation, so CI uses a Postgres service container only for the build.
@@ -2252,8 +2354,9 @@ jobs:
 Vitest `--testPathIgnorePatterns` is Jest-style. For Vitest, use `--exclude`:
 
 Replace the test step with:
+
 ```yaml
-      - run: pnpm -F @app/web exec vitest run --exclude "**/__tests__/server/actions/(auth|restaurant).test.ts" --exclude "**/__tests__/e2e/**"
+- run: pnpm -F @app/web exec vitest run --exclude "**/__tests__/server/actions/(auth|restaurant).test.ts" --exclude "**/__tests__/e2e/**"
 ```
 
 - [ ] **Step 3: Commit**
@@ -2268,6 +2371,7 @@ git commit -m "ci: add GitHub Actions for lint/typecheck/unit/build"
 ### Task 15: Deploy to Vercel against the same Supabase project
 
 **Files:**
+
 - Create: `docs/deploy/production.md`
 
 Single Supabase project (`restaurant`) is reused for prod. The email-confirmation split is already wired in Task 9 via `SUPABASE_AUTO_CONFIRM`.
@@ -2304,16 +2408,17 @@ git push -u origin main
 
 ## Env vars
 
-| Name | Local (.env.local) | Vercel (prod) | Notes |
-|---|---|---|---|
-| DATABASE_URL | ✓ | ✓ | pooled URL, port 6543 + `?pgbouncer=true&connection_limit=1` |
-| DIRECT_URL | ✓ | ✓ | port 5432, used by Prisma migrations |
-| NEXT_PUBLIC_SUPABASE_URL | ✓ | ✓ | same project URL |
-| NEXT_PUBLIC_SUPABASE_ANON_KEY | ✓ | ✓ | public |
-| SUPABASE_SERVICE_ROLE_KEY | ✓ | ✓ | secret |
-| SUPABASE_AUTO_CONFIRM | `true` | UNSET | bypasses email confirmation in dev only |
+| Name                          | Local (.env.local) | Vercel (prod) | Notes                                                        |
+| ----------------------------- | ------------------ | ------------- | ------------------------------------------------------------ |
+| DATABASE_URL                  | ✓                  | ✓             | pooled URL, port 6543 + `?pgbouncer=true&connection_limit=1` |
+| DIRECT_URL                    | ✓                  | ✓             | port 5432, used by Prisma migrations                         |
+| NEXT_PUBLIC_SUPABASE_URL      | ✓                  | ✓             | same project URL                                             |
+| NEXT_PUBLIC_SUPABASE_ANON_KEY | ✓                  | ✓             | public                                                       |
+| SUPABASE_SERVICE_ROLE_KEY     | ✓                  | ✓             | secret                                                       |
+| SUPABASE_AUTO_CONFIRM         | `true`             | UNSET         | bypasses email confirmation in dev only                      |
 
 ## Operations
+
 - Run new migrations: `DATABASE_URL=$DIRECT_URL pnpm -F @app/db exec prisma migrate deploy`
 - Reset auth users: Supabase dashboard → Authentication → Users (filter by test email pattern).
 - Tail logs: Vercel dashboard → Deployments → Runtime logs.
@@ -2323,6 +2428,7 @@ git push -u origin main
 - [ ] **Step 4: Smoke test the deploy**
 
 In a browser:
+
 1. Wait for Vercel build to succeed.
 2. Visit `https://<vercel-project>.vercel.app` → landing page.
 3. Click "Get started" → sign up with a real email → check inbox for confirmation link → confirm → log in → enter restaurant → land on dashboard.

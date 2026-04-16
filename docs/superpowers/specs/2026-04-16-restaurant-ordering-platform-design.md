@@ -13,6 +13,7 @@ A multi-tenant SaaS that lets restaurants accept dine-in orders via table-side Q
 **Positioning:** Lightweight alternative to Toast / Square for Restaurants for the dine-in QR-ordering use case. Designed for small-to-mid independent restaurants in single or small chain configurations.
 
 **Key value props:**
+
 - Zero install for diners — works in any phone browser
 - Real-time order routing to the right station
 - One subscription, all tables
@@ -23,6 +24,7 @@ A multi-tenant SaaS that lets restaurants accept dine-in orders via table-side Q
 ## 2. Core Features
 
 ### Customer
+
 - QR-scan → table-bound web app (no login)
 - Browse categories and items with images, descriptions, modifiers
 - Per-item notes ("no onions", "extra ice", "well done")
@@ -31,6 +33,7 @@ A multi-tenant SaaS that lets restaurants accept dine-in orders via table-side Q
 - Order status feedback (real-time)
 
 ### Owner / Admin
+
 - Email + password signup with email verification
 - Restaurant onboarding wizard (name, address, currency, tax %, table count)
 - Menu CRUD (categories, items, 1–3 images, price, station tag)
@@ -40,6 +43,7 @@ A multi-tenant SaaS that lets restaurants accept dine-in orders via table-side Q
 - Sales summary by day / item
 
 ### Staff (Kitchen, Bar, Cashier)
+
 - Department-scoped order queue
 - Status updates (received → preparing → ready → served / paid)
 - Printable ticket per order
@@ -49,21 +53,22 @@ A multi-tenant SaaS that lets restaurants accept dine-in orders via table-side Q
 
 ## 3. User Roles
 
-| Role | Scope | Auth | Capabilities |
-|---|---|---|---|
-| **Customer (Diner)** | Single table session | Anonymous + table token | View menu, order, pay |
-| **Owner** | One restaurant tenant | Email/password + optional MFA | Full admin: menu, tables, staff, orders, billing |
-| **Manager** | One restaurant tenant | Email/password | Same as owner except billing & staff invitation |
-| **Kitchen** | One restaurant tenant | Email/password (or PIN on shared terminal) | View food orders, update status |
-| **Bar** | One restaurant tenant | Email/password (or PIN) | View drink orders, update status |
-| **Cashier** | One restaurant tenant | Email/password (or PIN) | View all orders, mark cash payments received |
-| **Platform Admin** | All tenants | Separate console | Tenant ops, billing, support |
+| Role                 | Scope                 | Auth                                       | Capabilities                                     |
+| -------------------- | --------------------- | ------------------------------------------ | ------------------------------------------------ |
+| **Customer (Diner)** | Single table session  | Anonymous + table token                    | View menu, order, pay                            |
+| **Owner**            | One restaurant tenant | Email/password + optional MFA              | Full admin: menu, tables, staff, orders, billing |
+| **Manager**          | One restaurant tenant | Email/password                             | Same as owner except billing & staff invitation  |
+| **Kitchen**          | One restaurant tenant | Email/password (or PIN on shared terminal) | View food orders, update status                  |
+| **Bar**              | One restaurant tenant | Email/password (or PIN)                    | View drink orders, update status                 |
+| **Cashier**          | One restaurant tenant | Email/password (or PIN)                    | View all orders, mark cash payments received     |
+| **Platform Admin**   | All tenants           | Separate console                           | Tenant ops, billing, support                     |
 
 ---
 
 ## 4. User Flows
 
 ### Customer Flow
+
 1. Scan QR at table 7 → opens `/r/golden-fork/t/QtX9aB`
 2. Backend validates token → loads restaurant + table context into a signed session cookie
 3. Sees menu (sticky category nav, item grid, search)
@@ -74,6 +79,7 @@ A multi-tenant SaaS that lets restaurants accept dine-in orders via table-side Q
 8. Order status page (auto-refresh via realtime) shows: received → preparing → ready → served
 
 ### Owner Onboarding Flow
+
 1. Sign up with email/password → verify email
 2. Wizard: restaurant name, address, currency, tax rate, service charge
 3. Set number of tables → system generates unique tokens + downloadable QR PDF
@@ -83,6 +89,7 @@ A multi-tenant SaaS that lets restaurants accept dine-in orders via table-side Q
 7. Done — diners can scan
 
 ### Order-to-Kitchen Flow
+
 1. Customer submits order
 2. API creates `orders` row + `order_items` rows (each tagged with `station`)
 3. Backend broadcasts to:
@@ -142,6 +149,7 @@ idempotency_keys(key, restaurant_id, response_hash, created_at)
 ```
 
 **Indexes:**
+
 - `(restaurant_id, status)` on orders
 - `(restaurant_id, station, status)` on order_items
 - UNIQUE on `tables.token`
@@ -152,24 +160,24 @@ idempotency_keys(key, restaurant_id, response_hash, created_at)
 
 ## 6. Recommended Tech Stack
 
-| Layer | Choice | Why |
-|---|---|---|
-| Frontend | **Next.js 14 (App Router) + TypeScript + Tailwind + shadcn/ui** | SSR for menu (SEO + speed), RSC for fast data fetching, mobile-first |
-| State / data | **TanStack Query + Zustand (cart)** | Server cache + client cart |
-| Backend | **Next.js Route Handlers + tRPC** (or REST) | Same repo, type-safe end-to-end |
-| Database | **Postgres (Supabase or Neon)** | RLS for multi-tenancy, JSON support, robust |
-| ORM | **Prisma** | Type-safe, migrations, great DX |
-| Auth | **Supabase Auth** or **NextAuth.js (Auth.js)** + email/password + magic link | Built-in MFA, session JWT works with RLS |
-| Real-time | **Supabase Realtime** (Postgres CDC) or **Pusher / Ably** | Push new orders to station boards |
-| Payments | **Stripe** — Payment Element for diners; **Stripe Connect (Standard)** for owner payouts; Stripe Billing for SaaS subscription | Standard for restaurants; Connect lets each restaurant get paid directly |
-| QR generation | **`qrcode` npm package** (server-side PNG/SVG) + **`pdf-lib`** for printable sheet | Generate at table-create time, cache in storage |
-| File storage | **Supabase Storage** or **S3 + CloudFront** | Menu item images |
-| Email | **Resend** or **Postmark** | Order receipts, owner invites |
-| Printing | **Browser print** + **PrintNode** (cloud printers, optional) | Kitchen ticket printers |
-| Hosting | **Vercel** (frontend) + **Supabase / Neon** (DB) | Zero ops, global edge |
-| Cache / rate limit | **Upstash Redis** | Edge-compatible, cheap |
-| Monitoring | **Sentry** + **PostHog** + **Better Stack** | Errors, product analytics, uptime |
-| CI/CD | **GitHub Actions** | Lint, test, type-check, deploy |
+| Layer              | Choice                                                                                                                         | Why                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| Frontend           | **Next.js 14 (App Router) + TypeScript + Tailwind + shadcn/ui**                                                                | SSR for menu (SEO + speed), RSC for fast data fetching, mobile-first     |
+| State / data       | **TanStack Query + Zustand (cart)**                                                                                            | Server cache + client cart                                               |
+| Backend            | **Next.js Route Handlers + tRPC** (or REST)                                                                                    | Same repo, type-safe end-to-end                                          |
+| Database           | **Postgres (Supabase or Neon)**                                                                                                | RLS for multi-tenancy, JSON support, robust                              |
+| ORM                | **Prisma**                                                                                                                     | Type-safe, migrations, great DX                                          |
+| Auth               | **Supabase Auth** or **NextAuth.js (Auth.js)** + email/password + magic link                                                   | Built-in MFA, session JWT works with RLS                                 |
+| Real-time          | **Supabase Realtime** (Postgres CDC) or **Pusher / Ably**                                                                      | Push new orders to station boards                                        |
+| Payments           | **Stripe** — Payment Element for diners; **Stripe Connect (Standard)** for owner payouts; Stripe Billing for SaaS subscription | Standard for restaurants; Connect lets each restaurant get paid directly |
+| QR generation      | **`qrcode` npm package** (server-side PNG/SVG) + **`pdf-lib`** for printable sheet                                             | Generate at table-create time, cache in storage                          |
+| File storage       | **Supabase Storage** or **S3 + CloudFront**                                                                                    | Menu item images                                                         |
+| Email              | **Resend** or **Postmark**                                                                                                     | Order receipts, owner invites                                            |
+| Printing           | **Browser print** + **PrintNode** (cloud printers, optional)                                                                   | Kitchen ticket printers                                                  |
+| Hosting            | **Vercel** (frontend) + **Supabase / Neon** (DB)                                                                               | Zero ops, global edge                                                    |
+| Cache / rate limit | **Upstash Redis**                                                                                                              | Edge-compatible, cheap                                                   |
+| Monitoring         | **Sentry** + **PostHog** + **Better Stack**                                                                                    | Errors, product analytics, uptime                                        |
+| CI/CD              | **GitHub Actions**                                                                                                             | Lint, test, type-check, deploy                                           |
 
 **Alternative (more control):** NestJS API + Postgres on RDS + Prisma + Pusher + S3 + Stripe + Render/Railway.
 
@@ -205,6 +213,7 @@ idempotency_keys(key, restaurant_id, response_hash, created_at)
 ```
 
 **Key notes:**
+
 - All requests pass through Next.js middleware that resolves tenant from URL or session
 - DB queries go through Prisma with `restaurant_id` always in WHERE — RLS is the safety net
 - Stripe webhook handler updates `orders.payment_status` and triggers realtime broadcast
@@ -216,28 +225,28 @@ idempotency_keys(key, restaurant_id, response_hash, created_at)
 
 **Layout:** Left sidebar (Orders, Menu, Tables, Staff, Reports, Settings, Billing) + topbar (restaurant name, role switcher, profile).
 
-| Section | Features |
-|---|---|
+| Section           | Features                                                                                                                                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Orders (Live)** | Real-time board with columns Received / Preparing / Ready / Served; filter by station; click for detail; action buttons; sound on new order |
-| **Menu** | Drag-reorder categories; CRUD items; inline edit price; bulk availability toggle; CSV import/export; image upload (1–3 per item) with crop |
-| **Tables** | Add / rename / archive; bulk-create; printable QR PDF (one per table, with label "Table 7 — Golden Fork") |
-| **Staff** | Invite by email; role assignment; PIN for shared station terminals; deactivate |
-| **Reports** | Daily revenue, top items, station throughput, payment method split, peak hours |
-| **Settings** | Restaurant info, currency, tax, service charge, hours, time zone, print options |
-| **Billing** | Plan, payment method, invoices (Stripe Customer Portal embed) |
+| **Menu**          | Drag-reorder categories; CRUD items; inline edit price; bulk availability toggle; CSV import/export; image upload (1–3 per item) with crop  |
+| **Tables**        | Add / rename / archive; bulk-create; printable QR PDF (one per table, with label "Table 7 — Golden Fork")                                   |
+| **Staff**         | Invite by email; role assignment; PIN for shared station terminals; deactivate                                                              |
+| **Reports**       | Daily revenue, top items, station throughput, payment method split, peak hours                                                              |
+| **Settings**      | Restaurant info, currency, tax, service charge, hours, time zone, print options                                                             |
+| **Billing**       | Plan, payment method, invoices (Stripe Customer Portal embed)                                                                               |
 
 ---
 
 ## 9. Customer-Facing Pages
 
-| Route | Purpose |
-|---|---|
-| `/r/{slug}` | Restaurant landing (info, hours, sample menu — for marketing/SEO) |
-| `/r/{slug}/t/{token}` | Table-bound menu home |
-| `/r/{slug}/t/{token}/item/{itemId}` | Item detail modal/page |
-| `/r/{slug}/t/{token}/cart` | Cart review |
-| `/r/{slug}/t/{token}/checkout` | Payment selection + Stripe Element |
-| `/r/{slug}/t/{token}/order/{orderCode}` | Order status / receipt |
+| Route                                   | Purpose                                                           |
+| --------------------------------------- | ----------------------------------------------------------------- |
+| `/r/{slug}`                             | Restaurant landing (info, hours, sample menu — for marketing/SEO) |
+| `/r/{slug}/t/{token}`                   | Table-bound menu home                                             |
+| `/r/{slug}/t/{token}/item/{itemId}`     | Item detail modal/page                                            |
+| `/r/{slug}/t/{token}/cart`              | Cart review                                                       |
+| `/r/{slug}/t/{token}/checkout`          | Payment selection + Stripe Element                                |
+| `/r/{slug}/t/{token}/order/{orderCode}` | Order status / receipt                                            |
 
 Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 
@@ -246,12 +255,14 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 ## 10. API Endpoints (REST style; tRPC equivalents apply)
 
 ### Public (table token in cookie)
+
 - `GET /api/public/menu` — categories + available items (resolved from table cookie)
 - `GET /api/public/items/{id}` — item detail
 - `POST /api/public/orders` — create order (cash) or create + return Stripe PI client_secret (card)
 - `GET /api/public/orders/{code}` — order status
 
 ### Owner / staff (JWT auth, restaurant scope from membership)
+
 - `POST /api/auth/signup`, `POST /api/auth/login`, `POST /api/auth/logout`
 - `GET /api/me`
 - `GET/POST/PATCH/DELETE /api/categories`
@@ -266,6 +277,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 - `POST /api/billing/portal`
 
 ### Webhooks
+
 - `POST /api/webhooks/stripe` — payment_intent.succeeded, charge.refunded, invoice.paid (subscription)
 
 ---
@@ -286,6 +298,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 7. **Completion**: when all `order_items.status = served` and `payment_status=paid`, order auto-flips to `served`
 
 **Edge cases:**
+
 - Network failure mid-checkout → idempotency key on `POST /orders`
 - Stripe webhook arrives before client confirms → state machine accepts either order
 - Owner archives a table mid-order → existing order finishes; new scans rejected
@@ -296,6 +309,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 ## 12. Payment Flow
 
 ### Card (Stripe)
+
 1. Client creates order draft → server creates PaymentIntent: `paymentIntents.create({ amount, currency, transfer_data: { destination: restaurant.stripe_account_id }, application_fee_amount }, { idempotencyKey })`
 2. Server returns `{orderId, clientSecret}`
 3. Client mounts Stripe Payment Element with `clientSecret`
@@ -307,6 +321,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 **Stripe Connect (Standard accounts):** each restaurant connects their Stripe account; payouts go directly to them; platform takes `application_fee_amount` per transaction. (MVP can use a single platform account; Connect added v2.)
 
 ### Cash
+
 1. Client submits order → `payment_status=unpaid`
 2. Order routes to stations and cashier
 3. When customer pays cash, cashier taps "Mark paid" → `payment_status=paid, paid_at=now`
@@ -340,11 +355,11 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 - **Tenant resolution**: from URL slug (public pages) or from `memberships` JWT claim (admin)
 - **Plans** (suggested):
 
-| Plan | Price | Tables | Orders/mo | Stations | Connect payouts |
-|---|---|---|---|---|---|
-| Starter | €29/mo | 10 | 500 | 1 (combined) | No |
-| Pro | €79/mo | unlimited | 5,000 | 3 (kitchen/bar/cashier) | Yes |
-| Scale | €199/mo | unlimited | unlimited | + multi-location | Yes |
+| Plan    | Price   | Tables    | Orders/mo | Stations                | Connect payouts |
+| ------- | ------- | --------- | --------- | ----------------------- | --------------- |
+| Starter | €29/mo  | 10        | 500       | 1 (combined)            | No              |
+| Pro     | €79/mo  | unlimited | 5,000     | 3 (kitchen/bar/cashier) | Yes             |
+| Scale   | €199/mo | unlimited | unlimited | + multi-location        | Yes             |
 
 - **Per-tenant config**: currency, locale, tax, hours, branding (logo, color, favicon)
 - **Usage metering**: count orders/month for plan limits; soft-warn before block
@@ -357,6 +372,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 ## 15. MVP Scope (8–10 weeks)
 
 **In:**
+
 - Owner signup + single restaurant
 - Menu CRUD with up to 3 images per item
 - Tables with QR generation + downloadable PDF sheet
@@ -371,6 +387,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 - Email receipts
 
 **Out (v2+):**
+
 - Stripe Connect / per-restaurant payouts
 - Modifiers UI (data model ready)
 - Multi-language menus
@@ -408,6 +425,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 **Design system:** shadcn/ui components, Tailwind tokens, Inter for UI, restaurant brand color injected per tenant.
 
 ### Customer (mobile-first)
+
 - Hero header with restaurant logo + "Table 7"
 - Sticky horizontal category nav
 - Card grid: image, name, price, "+" button
@@ -417,6 +435,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 - Order status: timeline with icons (received, preparing, ready, served)
 
 ### Owner dashboard (desktop-primary, responsive)
+
 - Sidebar nav, content area
 - Live Orders: kanban-style columns, card per order with table number + items + timer
 - Menu: list with thumbnails, inline edit, drag handle
@@ -424,6 +443,7 @@ Mobile-first, PWA-installable, large touch targets, sticky cart bar.
 - Reports: charts (Recharts), date picker
 
 ### Station boards (tablet-primary)
+
 - Full-screen, large text, single column of tickets
 - Each ticket: table number, time elapsed, items with notes, [Start] / [Ready] / [Served] buttons
 - Audio cue on new order
@@ -511,18 +531,18 @@ restaurant-platform/
 
 ## 19. Step-by-Step Development Plan
 
-| Wk | Milestone | Deliverable |
-|---|---|---|
-| 1 | Repo + infra | Monorepo, Next.js, Prisma, Postgres locally, Vercel + Supabase staging, Sentry, GitHub Actions |
-| 2 | Auth + tenant | Owner signup/login, restaurant creation wizard, RLS policies, middleware tenant resolution |
-| 3 | Menu CRUD | Categories + items + image upload, admin pages, public menu read |
-| 4 | Tables + QR | Tables CRUD, QR generation, downloadable PDF, table-token middleware |
-| 5 | Cart + cash order | Customer flow up to "Place order" cash; orders + order_items writes; basic order list in admin |
-| 6 | Stripe + webhooks | Payment Element integration, webhook handler, receipts via Resend |
-| 7 | Real-time + station boards | Realtime channels, kitchen/bar/cashier boards, status updates |
-| 8 | Polish + reports | Daily revenue/orders chart, item availability toggle, mobile QA, accessibility pass |
-| 9 | Beta with 1 restaurant | Onboarding 1 pilot restaurant, observability, bugfixes |
-| 10 | Launch readiness | Pricing/billing, marketing site, docs, public launch |
+| Wk  | Milestone                  | Deliverable                                                                                    |
+| --- | -------------------------- | ---------------------------------------------------------------------------------------------- |
+| 1   | Repo + infra               | Monorepo, Next.js, Prisma, Postgres locally, Vercel + Supabase staging, Sentry, GitHub Actions |
+| 2   | Auth + tenant              | Owner signup/login, restaurant creation wizard, RLS policies, middleware tenant resolution     |
+| 3   | Menu CRUD                  | Categories + items + image upload, admin pages, public menu read                               |
+| 4   | Tables + QR                | Tables CRUD, QR generation, downloadable PDF, table-token middleware                           |
+| 5   | Cart + cash order          | Customer flow up to "Place order" cash; orders + order_items writes; basic order list in admin |
+| 6   | Stripe + webhooks          | Payment Element integration, webhook handler, receipts via Resend                              |
+| 7   | Real-time + station boards | Realtime channels, kitchen/bar/cashier boards, status updates                                  |
+| 8   | Polish + reports           | Daily revenue/orders chart, item availability toggle, mobile QA, accessibility pass            |
+| 9   | Beta with 1 restaurant     | Onboarding 1 pilot restaurant, observability, bugfixes                                         |
+| 10  | Launch readiness           | Pricing/billing, marketing site, docs, public launch                                           |
 
 ---
 
@@ -659,6 +679,7 @@ model OrderItem {
 ```
 
 ### `lib/qr.ts`
+
 ```ts
 import QRCode from "qrcode";
 import crypto from "crypto";
@@ -677,6 +698,7 @@ export function buildTableUrl(slug: string, token: string): string {
 ```
 
 ### `lib/tenant.ts`
+
 ```ts
 import { cookies } from "next/headers";
 import { prisma } from "./db";
@@ -705,6 +727,7 @@ export function setTableCookie(token: string) {
 ```
 
 ### `app/api/public/orders/route.ts`
+
 ```ts
 import { z } from "zod";
 import { prisma } from "@/lib/db";
@@ -718,11 +741,15 @@ const Body = z.object({
   paymentMethod: z.enum(["card", "cash"]),
   customerName: z.string().min(1).optional(),
   customerEmail: z.string().email().optional(),
-  items: z.array(z.object({
-    menuItemId: z.string(),
-    qty: z.number().int().positive(),
-    note: z.string().max(200).optional(),
-  })).min(1),
+  items: z
+    .array(
+      z.object({
+        menuItemId: z.string(),
+        qty: z.number().int().positive(),
+        note: z.string().max(200).optional(),
+      }),
+    )
+    .min(1),
   idempotencyKey: z.string().uuid(),
 });
 
@@ -737,7 +764,7 @@ export async function POST(req: Request) {
 
   const items = await prisma.menuItem.findMany({
     where: {
-      id: { in: body.items.map(i => i.menuItemId) },
+      id: { in: body.items.map((i) => i.menuItemId) },
       restaurantId: table.restaurantId,
       isAvailable: true,
     },
@@ -764,12 +791,15 @@ export async function POST(req: Request) {
 
   let clientSecret: string | undefined;
   if (body.paymentMethod === "card") {
-    const pi = await stripe.paymentIntents.create({
-      amount: totals.totalCents,
-      currency: table.restaurant.currency.toLowerCase(),
-      metadata: { orderId: order.id, restaurantId: table.restaurantId },
-      receipt_email: body.customerEmail,
-    }, { idempotencyKey: body.idempotencyKey });
+    const pi = await stripe.paymentIntents.create(
+      {
+        amount: totals.totalCents,
+        currency: table.restaurant.currency.toLowerCase(),
+        metadata: { orderId: order.id, restaurantId: table.restaurantId },
+        receipt_email: body.customerEmail,
+      },
+      { idempotencyKey: body.idempotencyKey },
+    );
     clientSecret = pi.client_secret!;
     await prisma.order.update({
       where: { id: order.id },
@@ -783,6 +813,7 @@ export async function POST(req: Request) {
 ```
 
 ### `app/api/webhooks/stripe/route.ts`
+
 ```ts
 import Stripe from "stripe";
 import { prisma } from "@/lib/db";
@@ -793,7 +824,9 @@ export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature")!;
   const buf = await req.arrayBuffer();
   const event = stripe.webhooks.constructEvent(
-    Buffer.from(buf), sig, process.env.STRIPE_WEBHOOK_SECRET!
+    Buffer.from(buf),
+    sig,
+    process.env.STRIPE_WEBHOOK_SECRET!,
   );
 
   if (event.type === "payment_intent.succeeded") {
@@ -810,13 +843,11 @@ export async function POST(req: Request) {
 ```
 
 ### `lib/realtime.ts` (Supabase Realtime)
+
 ```ts
 import { createClient } from "@supabase/supabase-js";
 
-const supa = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supa = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 export async function broadcastNewOrder(order: any) {
   const r = order.restaurantId;
@@ -825,15 +856,18 @@ export async function broadcastNewOrder(order: any) {
 
   await Promise.all([
     supa.channel(`restaurant:${r}:kitchen`).send({
-      type: "broadcast", event: "order.new",
+      type: "broadcast",
+      event: "order.new",
       payload: { orderCode: order.code, tableId: order.tableId, items: kitchen },
     }),
     supa.channel(`restaurant:${r}:bar`).send({
-      type: "broadcast", event: "order.new",
+      type: "broadcast",
+      event: "order.new",
       payload: { orderCode: order.code, tableId: order.tableId, items: bar },
     }),
     supa.channel(`restaurant:${r}:cashier`).send({
-      type: "broadcast", event: "order.new",
+      type: "broadcast",
+      event: "order.new",
       payload: order,
     }),
   ]);
@@ -841,12 +875,15 @@ export async function broadcastNewOrder(order: any) {
 
 export async function broadcastOrderUpdate(order: any) {
   await supa.channel(`restaurant:${order.restaurantId}:cashier`).send({
-    type: "broadcast", event: "order.update", payload: order,
+    type: "broadcast",
+    event: "order.update",
+    payload: order,
   });
 }
 ```
 
 ### `middleware.ts` (table token capture)
+
 ```ts
 import { NextRequest, NextResponse } from "next/server";
 
@@ -855,8 +892,11 @@ export function middleware(req: NextRequest) {
   if (m) {
     const res = NextResponse.next();
     res.cookies.set("tableSession", m[1], {
-      httpOnly: true, secure: true, sameSite: "lax",
-      maxAge: 60 * 60 * 4, path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 4,
+      path: "/",
     });
     return res;
   }
