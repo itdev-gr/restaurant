@@ -5,6 +5,7 @@ const PROTECTED = [
   /^\/dashboard/, /^\/onboarding/, /^\/orders/, /^\/menu/,
   /^\/tables/, /^\/staff/, /^\/reports/, /^\/settings/,
   /^\/kitchen/, /^\/bar/, /^\/cashier/,
+  /^\/super-admin/,
 ];
 
 export default async function middleware(req: NextRequest) {
