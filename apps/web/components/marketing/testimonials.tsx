@@ -18,27 +18,30 @@ export function Testimonials() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(statsRef.current!.children, {
-        y: 30,
-        opacity: 0,
-        stagger: 0.12,
-        scrollTrigger: {
-          trigger: statsRef.current,
-          start: "top 80%",
-          once: true,
+      gsap.fromTo(
+        statsRef.current!.children,
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.12,
+          ease: "power2.out",
+          scrollTrigger: { trigger: statsRef.current, start: "top 85%", once: true },
         },
-      });
+      );
 
-      gsap.from(ctaRef.current!, {
-        scale: 0.9,
-        opacity: 0,
-        ease: "back.out(1.4)",
-        scrollTrigger: {
-          trigger: ctaRef.current,
-          start: "top 85%",
-          once: true,
+      gsap.fromTo(
+        ctaRef.current!,
+        { scale: 0.9, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.7,
+          ease: "back.out(1.4)",
+          scrollTrigger: { trigger: ctaRef.current, start: "top 85%", once: true },
         },
-      });
+      );
     }, sectionRef);
 
     return () => ctx.revert();

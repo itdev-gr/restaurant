@@ -49,27 +49,31 @@ export function Features() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(headingRef.current!.children, {
-        y: 30,
-        opacity: 0,
-        stagger: 0.15,
-        scrollTrigger: {
-          trigger: headingRef.current,
-          start: "top 85%",
-          once: true,
+      gsap.fromTo(
+        headingRef.current!.children,
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: "power2.out",
+          scrollTrigger: { trigger: headingRef.current, start: "top 85%", once: true },
         },
-      });
+      );
 
-      gsap.from(cardsRef.current!.children, {
-        y: 40,
-        opacity: 0,
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: cardsRef.current,
-          start: "top 80%",
-          once: true,
+      gsap.fromTo(
+        cardsRef.current!.children,
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: { trigger: cardsRef.current, start: "top 85%", once: true },
         },
-      });
+      );
     }, sectionRef);
 
     return () => ctx.revert();

@@ -30,16 +30,18 @@ export function HowItWorks() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(stepsRef.current!.children, {
-        x: -30,
-        opacity: 0,
-        stagger: 0.25,
-        scrollTrigger: {
-          trigger: stepsRef.current,
-          start: "top 75%",
-          once: true,
+      gsap.fromTo(
+        stepsRef.current!.children,
+        { x: -30, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.25,
+          ease: "power2.out",
+          scrollTrigger: { trigger: stepsRef.current, start: "top 80%", once: true },
         },
-      });
+      );
     }, sectionRef);
 
     return () => ctx.revert();
