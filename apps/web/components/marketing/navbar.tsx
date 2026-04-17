@@ -26,6 +26,12 @@ export function Navbar() {
         </Link>
         <div className="flex items-center gap-3">
           <Link
+            href="/pricing"
+            className="hidden rounded-lg px-4 py-2 text-sm font-medium text-slate-700 transition hover:text-slate-900 sm:block"
+          >
+            Pricing
+          </Link>
+          <Link
             href="/login"
             className="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 transition hover:text-slate-900"
           >

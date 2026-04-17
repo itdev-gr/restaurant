@@ -14,12 +14,10 @@ export function Footer() {
             </p>
           </div>
           <div className="flex gap-6 text-sm text-slate-500">
-            <Link href="/login" className="hover:text-slate-900">
-              Log in
-            </Link>
-            <Link href="/signup" className="hover:text-slate-900">
-              Sign up
-            </Link>
+            <Link href="/pricing" className="hover:text-slate-900">Pricing</Link>
+            <Link href="/contact" className="hover:text-slate-900">Contact</Link>
+            <Link href="/login" className="hover:text-slate-900">Log in</Link>
+            <Link href="/signup" className="hover:text-slate-900">Sign up</Link>
           </div>
         </div>
         <div className="mt-8 border-t pt-6 text-center text-xs text-slate-400">
