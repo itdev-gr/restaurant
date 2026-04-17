@@ -9,4 +9,22 @@ html, body { @apply h-full bg-white text-slate-900 antialiased; }
   .input {
     @apply w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
   }
+  .customer-header-gradient {
+    background: linear-gradient(135deg, #5b6cff 0%, #8b5cf6 100%);
+  }
+  .slide-up-enter {
+    animation: slideUp 0.3s ease-out;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .pt-safe-top { padding-top: env(safe-area-inset-top, 0px); }
+  .pb-safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
 }

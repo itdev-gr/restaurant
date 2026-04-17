@@ -25,21 +25,44 @@ export default async function CustomerMenuPage({
 
   return (
     <>
-      <header className="sticky top-0 z-10 border-b bg-white px-4 py-3">
-        <div className="text-xs uppercase tracking-wide text-slate-500">
-          Table {resolved.data.table.label ?? resolved.data.table.number}
+      <header className="customer-header-gradient px-5 pb-5 pt-safe-top">
+        <div className="flex items-center justify-between pt-4">
+          <div>
+            <h1 className="text-xl font-bold text-white">{resolved.data.restaurant.name}</h1>
+            <p className="mt-0.5 text-sm text-white/70">Browse our menu</p>
+          </div>
+          <div className="flex items-center gap-2 rounded-full bg-white/20 px-3 py-1.5 backdrop-blur-sm">
+            <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M3 14h18M5 6h14a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z" />
+            </svg>
+            <span className="text-sm font-semibold text-white">
+              {resolved.data.table.label ?? `Table ${resolved.data.table.number}`}
+            </span>
+          </div>
         </div>
-        <h1 className="text-lg font-semibold">{resolved.data.restaurant.name}</h1>
       </header>
+
       <MenuCategories
         slug={params.slug}
         token={params.token}
         categories={categories}
         activeId={activeId}
       />
-      <main className="px-4 pb-24 pt-4">
-        <MenuItemList items={items.filter((i) => i.isAvailable)} currency={resolved.data.restaurant.currency} />
+
+      <main className="px-4 pb-28 pt-4">
+        {items.filter((i) => i.isAvailable).length === 0 ? (
+          <div className="flex flex-col items-center gap-3 py-16 text-center">
+            <div className="text-4xl">🍽️</div>
+            <p className="text-sm text-slate-500">No items in this category yet.</p>
+          </div>
+        ) : (
+          <MenuItemList
+            items={items.filter((i) => i.isAvailable)}
+            currency={resolved.data.restaurant.currency}
+          />
+        )}
       </main>
+
       <CartBar
         slug={params.slug}
         token={params.token}
