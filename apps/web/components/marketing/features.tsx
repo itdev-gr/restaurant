@@ -1,3 +1,8 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
+
 const FEATURES = [
   {
     icon: "📱",
@@ -38,10 +43,42 @@ const FEATURES = [
 ];
 
 export function Features() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(headingRef.current!.children, {
+        y: 30,
+        opacity: 0,
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: headingRef.current,
+          start: "top 85%",
+          once: true,
+        },
+      });
+
+      gsap.from(cardsRef.current!.children, {
+        y: 40,
+        opacity: 0,
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: cardsRef.current,
+          start: "top 80%",
+          once: true,
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="bg-white px-5 py-20">
+    <section ref={sectionRef} className="bg-white px-5 py-20">
       <div className="mx-auto max-w-6xl">
-        <div className="text-center">
+        <div ref={headingRef} className="text-center">
           <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
             Everything you need to go digital
           </h2>
@@ -49,7 +86,7 @@ export function Features() {
             From menu to payment to kitchen — one platform, zero friction.
           </p>
         </div>
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div ref={cardsRef} className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
             <div
               key={f.title}

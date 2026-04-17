@@ -1,3 +1,8 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import { gsap } from "@/lib/gsap";
+
 const STEPS = [
   {
     step: "1",
@@ -20,8 +25,28 @@ const STEPS = [
 ];
 
 export function HowItWorks() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const stepsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(stepsRef.current!.children, {
+        x: -30,
+        opacity: 0,
+        stagger: 0.25,
+        scrollTrigger: {
+          trigger: stepsRef.current,
+          start: "top 75%",
+          once: true,
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="how-it-works" className="bg-slate-50 px-5 py-20">
+    <section ref={sectionRef} id="how-it-works" className="bg-slate-50 px-5 py-20">
       <div className="mx-auto max-w-4xl">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">
@@ -31,7 +56,7 @@ export function HowItWorks() {
             No hardware. No installation. Just a browser.
           </p>
         </div>
-        <div className="mt-14 space-y-12">
+        <div ref={stepsRef} className="mt-14 space-y-12">
           {STEPS.map((s, i) => (
             <div key={s.step} className="flex gap-6">
               <div className="flex flex-col items-center">
