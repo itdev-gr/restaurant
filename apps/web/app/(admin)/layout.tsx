@@ -14,6 +14,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     select: { restaurant: { select: { name: true } } },
   });
 
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { isSuperAdmin: true },
+  });
+
   // Onboarding shows children only — no shell until the user has a restaurant.
   if (!membership) {
     return <main className="min-h-screen bg-slate-50">{children}</main>;
@@ -23,7 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="flex min-h-screen">
       <Sidebar />
       <div className="flex flex-1 flex-col">
-        <Topbar restaurantName={membership.restaurant.name} userEmail={user.email!} />
+        <Topbar restaurantName={membership.restaurant.name} userEmail={user.email!} isSuperAdmin={dbUser?.isSuperAdmin ?? false} />
         <main className="flex-1 bg-white p-6">{children}</main>
       </div>
     </div>
