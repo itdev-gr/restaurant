@@ -67,6 +67,12 @@ export function StationBoard({
           })),
         );
       })
+      .on("broadcast", { event: "order.status" }, ({ payload }) => {
+        const p = payload as { orderId: string; status?: string };
+        if (p.status === "served" || p.status === "cancelled") {
+          setTickets((prev) => prev.filter((t) => t.orderId !== p.orderId));
+        }
+      })
       .subscribe();
 
     return () => {

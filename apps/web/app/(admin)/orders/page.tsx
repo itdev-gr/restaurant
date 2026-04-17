@@ -12,6 +12,7 @@ export default async function OrdersPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">Orders</h1>
       <OrdersList
+        restaurantId={restaurantId}
         orders={orders.map((o) => ({
           id: o.id,
           code: o.code,

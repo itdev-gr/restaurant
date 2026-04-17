@@ -3,6 +3,7 @@
 import { requireMembership } from "@/lib/membership";
 import { prisma } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
+import { broadcastOrderStatusUpdate } from "@/lib/realtime";
 import type { ActionResult } from "@/server/actions/auth";
 
 type Status = "received" | "preparing" | "ready" | "served" | "cancelled";
@@ -12,11 +13,20 @@ export async function setOrderStatusAction(
   status: Status,
 ): Promise<ActionResult<{ id: string }>> {
   const { restaurantId } = await requireMembership();
-  const { count } = await prisma.order.updateMany({
+  const order = await prisma.order.findFirst({
     where: { id, restaurantId },
-    data: { status },
+    select: { code: true },
   });
-  if (count === 0) return { ok: false, error: { code: "NOT_FOUND", message: "Order not found." } };
+  if (!order) return { ok: false, error: { code: "NOT_FOUND", message: "Order not found." } };
+
+  await prisma.order.update({ where: { id }, data: { status } });
+
+  broadcastOrderStatusUpdate(restaurantId, {
+    orderId: id,
+    orderCode: order.code,
+    status,
+  }).catch(() => {});
+
   return { ok: true, data: { id } };
 }
 
@@ -24,11 +34,23 @@ export async function markOrderPaidAction(
   id: string,
 ): Promise<ActionResult<{ id: string }>> {
   const { restaurantId } = await requireMembership();
-  const { count } = await prisma.order.updateMany({
+  const order = await prisma.order.findFirst({
     where: { id, restaurantId },
+    select: { code: true },
+  });
+  if (!order) return { ok: false, error: { code: "NOT_FOUND", message: "Order not found." } };
+
+  await prisma.order.update({
+    where: { id },
     data: { paymentStatus: "paid", paidAt: new Date() },
   });
-  if (count === 0) return { ok: false, error: { code: "NOT_FOUND", message: "Order not found." } };
+
+  broadcastOrderStatusUpdate(restaurantId, {
+    orderId: id,
+    orderCode: order.code,
+    paymentStatus: "paid",
+  }).catch(() => {});
+
   return { ok: true, data: { id } };
 }
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { setOrderStatusAction, markOrderPaidAction, refundOrderAction } from "@/server/actions/order-admin";
 
 type OrderStatus = "received" | "preparing" | "ready" | "served" | "cancelled";
@@ -33,9 +34,93 @@ const NEXT: Record<OrderStatus, OrderStatus | null> = {
   cancelled: null,
 };
 
-export function OrdersList({ orders }: { orders: Order[] }) {
+export function OrdersList({
+  restaurantId,
+  orders: initialOrders,
+}: {
+  restaurantId: string;
+  orders: Order[];
+}) {
   const router = useRouter();
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [pending, startTransition] = useTransition();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio(
+      "data:audio/wav;base64,UklGRl9vT19teleQlZWXl5aUkY6KhYF8d3==",
+    );
+  }, []);
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    const channel = supabase
+      .channel(`restaurant:${restaurantId}:cashier`)
+      .on("broadcast", { event: "order.new" }, ({ payload }) => {
+        const newOrder = payload as {
+          orderId: string;
+          orderCode: string;
+          tableNumber: number;
+          tableLabel: string | null;
+          items: { id: string; name: string; qty: number; note: string | null; station: "kitchen" | "bar" | "both"; status: string }[];
+          paymentMethod: string;
+          totalCents: number;
+          createdAt: string;
+        };
+        setOrders((prev) => [
+          {
+            id: newOrder.orderId,
+            code: newOrder.orderCode,
+            status: "received" as OrderStatus,
+            paymentMethod: newOrder.paymentMethod as "card" | "cash",
+            paymentStatus: "unpaid",
+            total: newOrder.totalCents,
+            createdAt: newOrder.createdAt,
+            tableLabel: newOrder.tableLabel ?? `Table ${newOrder.tableNumber}`,
+            items: newOrder.items.map((it) => ({
+              id: it.id,
+              qty: it.qty,
+              name: it.name,
+              station: it.station,
+              note: it.note,
+              status: it.status,
+            })),
+          },
+          ...prev,
+        ]);
+        audioRef.current?.play().catch(() => {});
+      })
+      .on("broadcast", { event: "item.status" }, ({ payload }) => {
+        const p = payload as { orderItemId: string; newStatus: string };
+        setOrders((prev) =>
+          prev.map((o) => ({
+            ...o,
+            items: o.items.map((i) =>
+              i.id === p.orderItemId ? { ...i, status: p.newStatus } : i,
+            ),
+          })),
+        );
+      })
+      .on("broadcast", { event: "order.status" }, ({ payload }) => {
+        const p = payload as { orderId: string; status?: string; paymentStatus?: string };
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === p.orderId
+              ? {
+                  ...o,
+                  ...(p.status ? { status: p.status as OrderStatus } : {}),
+                  ...(p.paymentStatus ? { paymentStatus: p.paymentStatus as Order["paymentStatus"] } : {}),
+                }
+              : o,
+          ),
+        );
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [restaurantId]);
 
   const advance = (id: string, status: OrderStatus) => {
     const next = NEXT[status];
@@ -64,7 +149,7 @@ export function OrdersList({ orders }: { orders: Order[] }) {
   if (orders.length === 0) {
     return (
       <div className="rounded-lg border border-dashed p-8 text-center text-slate-500">
-        No orders yet.
+        No orders yet. Waiting for new orders…
       </div>
     );
   }
