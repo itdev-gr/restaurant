@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CheckoutForm } from "@/components/customer/checkout-form";
 
 export const dynamic = "force-dynamic";
@@ -8,10 +9,16 @@ export default function CheckoutPage({
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-10 border-b bg-white px-4 py-3">
-        <a href={`/r/${params.slug}/t/${params.token}/cart`} className="text-sm text-slate-600">
-          ← Back to cart
-        </a>
-        <h1 className="mt-1 text-lg font-semibold">Checkout</h1>
+        <Link
+          href={`/r/${params.slug}/t/${params.token}/cart`}
+          className="inline-flex items-center gap-1 text-sm text-slate-500"
+        >
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to cart
+        </Link>
+        <h1 className="mt-1 text-lg font-bold">Checkout</h1>
       </header>
       <CheckoutForm slug={params.slug} token={params.token} />
     </div>
