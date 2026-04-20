@@ -30,9 +30,11 @@ function hashIndex(str: string, max: number) {
 export function MenuItemList({
   items,
   currency,
+  tableId,
 }: {
   items: Item[];
   currency: string;
+  tableId: string;
 }) {
   const [open, setOpen] = useState<Item | null>(null);
   return (
@@ -85,10 +87,6 @@ export function MenuItemList({
           currency={currency}
           onClose={() => setOpen(null)}
           onAdd={(qty, note) => {
-            const tableId = (
-              document.querySelector("[data-table-id]") as HTMLElement | null
-            )?.dataset["tableId"];
-            if (!tableId) return;
             addLine(tableId, {
               menuItemId: open.id,
               name: open.name,

@@ -85,11 +85,12 @@ function InnerCardForm({
 export function CardPaymentForm({
   slug,
   token,
+  tableId,
 }: {
   slug: string;
   token: string;
+  tableId: string;
 }) {
-  const [tableId, setTableId] = useState<string | null>(null);
   const [cart, setCart] = useState<Cart | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -99,18 +100,13 @@ export function CardPaymentForm({
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
-    for (let i = 0; i < window.localStorage.length; i++) {
-      const k = window.localStorage.key(i);
-      if (k?.startsWith("cart_")) {
-        const id = k.slice("cart_".length);
-        setTableId(id);
-        setCart(readCart(id));
-        break;
-      }
-    }
-  }, []);
+    setCart(readCart(tableId));
+    const update = () => setCart(readCart(tableId));
+    window.addEventListener("cart-change", update);
+    return () => window.removeEventListener("cart-change", update);
+  }, [tableId]);
 
-  if (!cart || cart.lines.length === 0 || !tableId) {
+  if (!cart || cart.lines.length === 0) {
     return <div className="p-4 text-sm text-slate-500">Cart is empty.</div>;
   }
 

@@ -1,11 +1,16 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import { resolveTableFromToken } from "@/server/services/table-session";
 import { CartList } from "@/components/customer/cart-list";
 
 export const dynamic = "force-dynamic";
 
-export default function CartPage({
+export default async function CartPage({
   params,
 }: { params: { slug: string; token: string } }) {
+  const resolved = await resolveTableFromToken(params.slug, params.token);
+  if (!resolved.ok) notFound();
+
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="sticky top-0 z-10 border-b bg-white px-4 py-3">
@@ -20,7 +25,11 @@ export default function CartPage({
         </Link>
         <h1 className="mt-1 text-lg font-bold">Your order</h1>
       </header>
-      <CartList slug={params.slug} token={params.token} />
+      <CartList
+        slug={params.slug}
+        token={params.token}
+        tableId={resolved.data.tableId}
+      />
     </div>
   );
 }

@@ -34,13 +34,10 @@ export function CartBar({
     };
   }, [tableId]);
 
-  if (count === 0) return <span data-table-id={tableId} className="hidden" />;
+  if (count === 0) return null;
 
   return (
-    <div
-      data-table-id={tableId}
-      className="fixed inset-x-0 bottom-0 z-20 p-4 pb-safe-bottom"
-    >
+    <div className="fixed inset-x-0 bottom-0 z-20 p-4 pb-safe-bottom">
       <Link
         href={`/r/${slug}/t/${token}/cart`}
         className="flex items-center justify-between rounded-2xl bg-brand-500 px-5 py-4 shadow-xl shadow-brand-500/30 transition-all active:scale-[0.98]"

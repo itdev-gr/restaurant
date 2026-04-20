@@ -14,27 +14,29 @@ function uuid() {
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20, 32)}`;
 }
 
-export function CheckoutForm({ slug, token }: { slug: string; token: string }) {
+export function CheckoutForm({
+  slug,
+  token,
+  tableId,
+}: {
+  slug: string;
+  token: string;
+  tableId: string;
+}) {
   const router = useRouter();
-  const [tableId, setTableId] = useState<string | null>(null);
   const [cart, setCart] = useState<Cart | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<"cash" | "card" | null>(null);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    for (let i = 0; i < window.localStorage.length; i++) {
-      const k = window.localStorage.key(i);
-      if (k?.startsWith("cart_")) {
-        const id = k.slice("cart_".length);
-        setTableId(id);
-        setCart(readCart(id));
-        break;
-      }
-    }
-  }, []);
+    setCart(readCart(tableId));
+    const update = () => setCart(readCart(tableId));
+    window.addEventListener("cart-change", update);
+    return () => window.removeEventListener("cart-change", update);
+  }, [tableId]);
 
-  if (!cart || cart.lines.length === 0 || !tableId) {
+  if (!cart || cart.lines.length === 0) {
     return <div className="p-6 text-sm text-slate-500">Cart is empty.</div>;
   }
 
@@ -72,7 +74,7 @@ export function CheckoutForm({ slug, token }: { slug: string; token: string }) {
         >
           &larr; Change payment method
         </button>
-        <CardPaymentForm slug={slug} token={token} />
+        <CardPaymentForm slug={slug} token={token} tableId={tableId} />
       </main>
     );
   }

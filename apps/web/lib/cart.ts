@@ -42,7 +42,9 @@ export function removeLine(tableId: string, index: number) {
 }
 
 export function clearCart(tableId: string) {
-  writeCart({ tableId, lines: [] });
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(`cart_${tableId}`);
+  window.dispatchEvent(new CustomEvent("cart-change"));
 }
 
 export function cartTotalCents(cart: Cart) {

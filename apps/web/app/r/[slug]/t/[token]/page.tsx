@@ -59,6 +59,7 @@ export default async function CustomerMenuPage({
           <MenuItemList
             items={items.filter((i) => i.isAvailable)}
             currency={resolved.data.restaurant.currency}
+            tableId={resolved.data.tableId}
           />
         )}
       </main>

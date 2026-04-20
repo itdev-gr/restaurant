@@ -6,30 +6,25 @@ import {
   readCart, updateLine, removeLine, cartTotalCents, type Cart,
 } from "@/lib/cart";
 
-export function CartList({ slug, token }: { slug: string; token: string }) {
-  const [tableId, setTableId] = useState<string | null>(null);
+export function CartList({
+  slug,
+  token,
+  tableId,
+}: {
+  slug: string;
+  token: string;
+  tableId: string;
+}) {
   const [cart, setCart] = useState<Cart | null>(null);
 
   useEffect(() => {
-    for (let i = 0; i < window.localStorage.length; i++) {
-      const k = window.localStorage.key(i);
-      if (k?.startsWith("cart_")) {
-        const id = k.slice("cart_".length);
-        setTableId(id);
-        setCart(readCart(id));
-        break;
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!tableId) return;
+    setCart(readCart(tableId));
     const update = () => setCart(readCart(tableId));
     window.addEventListener("cart-change", update);
     return () => window.removeEventListener("cart-change", update);
   }, [tableId]);
 
-  if (!tableId || !cart || cart.lines.length === 0) {
+  if (!cart || cart.lines.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 p-8 py-16 text-center">
         <div className="text-4xl">🛒</div>
